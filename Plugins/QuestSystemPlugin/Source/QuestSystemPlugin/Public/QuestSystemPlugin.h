@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FQuestSystemPluginModule : public IModuleInterface
+DECLARE_LOG_CATEGORY_EXTERN(LogQuestSystemModule, All, All)
+
+class FQuestSystemModule final : public IModuleInterface
 {
 public:
-
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
