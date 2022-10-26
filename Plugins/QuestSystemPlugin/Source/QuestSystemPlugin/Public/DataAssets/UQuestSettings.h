@@ -1,23 +1,16 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DataAsset.h"
+#include "UObject/Object.h"
 #include "UQuestSettings.generated.h"
 
-struct FQuest;
-
-UCLASS(BlueprintType)
-class UQuestSettings final : public UDataAsset
+/**
+ * 
+ */
+UCLASS(Blueprintable, BlueprintType)
+class QUESTSYSTEMPLUGIN_API UQuestSettings final : public UObject
 {
 	GENERATED_BODY()
-	
-public:
-	UQuestSettings()
-	{
-	}
-
-	UPROPERTY(EditAnywhere, Category="Quests")
-	TArray<FQuest> Quests;
 };
