@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "FTestStruct.h"
+#include "FQuestStruct.h"
 #include "UQuestStep.h"
 #include "Quest.generated.h"
 
@@ -15,5 +15,8 @@ public:
 	FString Name;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TArray<FTestStruct> Steps;
+	TArray<FQuestStruct> Steps;
+
+	UPROPERTY()
+	UQuestStep* CurrentStep;
 };

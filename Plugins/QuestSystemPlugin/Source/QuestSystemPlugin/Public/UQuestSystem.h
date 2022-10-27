@@ -8,19 +8,40 @@
 UCLASS(meta=(ScriptName="QuestSystem"))
 class UQuestSystem final : public UBlueprintFunctionLibrary
 {
+	inline static UQuest* CurrentQuest;
+	
 	GENERATED_BODY()
-
-	inline static UQuest* CurrentQuest = nullptr;
-	
 public:
-	UFUNCTION(BlueprintCallable, Category="QuestSystem")
-	static bool StartQuest(const TSoftObjectPtr<UQuest> InQuest);
+	UFUNCTION(BlueprintCallable,
+		Category="QuestSystem",
+		meta =
+		(
+			HidePin = "SelfObject",
+			DefaultToSelf = "SelfObject",
+			WorldContext = "WorldContextObject"
+		)
+	)
+	static bool StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest);
 	
-	UFUNCTION(BlueprintCallable, Category="QuestSystem")
-	static bool StopQuest(const TSoftObjectPtr<UQuest> InQuest);
+	UFUNCTION(BlueprintCallable,
+		Category="QuestSystem",
+		meta =
+		(
+			HidePin = "SelfObject",
+			DefaultToSelf = "SelfObject",
+			WorldContext = "WorldContextObject"
+		)
+	)
+	static bool StopQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest);
 
-	UFUNCTION(BlueprintCallable, Category="QuestSystem")
-	static bool FinishQuest(const TSoftObjectPtr<UQuest> InQuest);
+	UFUNCTION(BlueprintCallable,
+		Category="QuestSystem",
+		meta =
+		(
+			WorldContext = "WorldContextObject"
+		)
+	)
+	static bool FinishQuest(UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest);
 	
 private:
 	#pragma region Templated SoftPointer Helpers

@@ -13,8 +13,8 @@ public:
 
 	// TODO: Do we need Completed here? maybe for rewards?
 	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
-	void OnQuestStepCompleted(UQuest* Quest);
+	void OnQuestStepCompleted();
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
-	void OnQuestStepStart(const UQuestSettings* QuestStepData);
+	void OnQuestStepStart(const UQuestSettings* QuestStepData, const UQuest* Quest);
 };
