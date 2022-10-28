@@ -3,7 +3,7 @@
 #include "DataAssets/UQuestSettings.h"
 #include "Kismet/GameplayStatics.h"
 
-#if WITH_EDITOR
+#if WITH_EDITOR 
 	#include "Misc/UObjectToken.h"
 #endif
 
@@ -12,6 +12,7 @@
 bool UQuestSystem::StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest)
 {
 	UQuest* Quest = GetOrLoad(&InQuest);
+	UWorld* World = GEngine->GetCurrentPlayWorld();
 	
 	// TODO: Do we actually want to allow this?
 	if (IsValid(CurrentQuest))
@@ -61,34 +62,34 @@ bool UQuestSystem::StartQuest(UObject* SelfObject, UObject* WorldContextObject, 
 	
 	const auto [QuestStepClass, QuestSettingClass] = CurrentQuest->Steps[0];
 	
-	const UClass* QuestStep = GetOrLoad(QuestStepClass);
-	const UClass* QuestSetting = GetOrLoad(QuestSettingClass);
+	const UClass* QuestStep = GetOrLoad(&QuestStepClass);
+	const UClass* QuestSetting = GetOrLoad(&QuestSettingClass);
 
 	UQuestStep* QuestStepObject = NewObject<UQuestStep>(WorldContextObject, QuestStep);
 	const UQuestSettings* QuestSettingObject = NewObject<UQuestSettings>(WorldContextObject, QuestSetting);
 
 	QuestStepObject->OnQuestStepStart(QuestSettingObject, Quest);
-	Quest->CurrentStep = QuestStepObject;
+	CurrentQuest->CurrentStep = QuestStepObject;
 	
 	return true;
 }
 
-bool UQuestSystem::StopQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest)
+bool UQuestSystem::FinishQuestInternal(const UObject* SelfObject, const TSoftObjectPtr<UQuest>* InQuest, bool bCancelled)
 {
-	const UQuest* Quest = GetOrLoad(&InQuest);
+	const UQuest* Quest = GetOrLoad(InQuest);
 	
 	// TODO: Do we actually want to allow this?
 	if (!IsValid(CurrentQuest))
 	{
 		UE_LOG(LogQuestSystemModule, Error, TEXT("QuestSystem: Quest %s (%s) is not the current running quest"),
-			*Quest->Name, *Quest->GetPathName());
+		       *Quest->Name, *Quest->GetPathName());
 
 #if WITH_EDITOR
 		FMessageLog("PIE").Error()
-			->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest")))
-			->AddToken(FUObjectToken::Create(Quest))
-			->AddToken(FTextToken::Create(FText::FromString("is not the current running quest ")))
-			->AddToken(FUObjectToken::Create(SelfObject->GetClass()));
+		                  ->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest")))
+		                  ->AddToken(FUObjectToken::Create(Quest))
+		                  ->AddToken(FTextToken::Create(FText::FromString("is not the current running quest ")))
+		                  ->AddToken(FUObjectToken::Create(SelfObject->GetClass()));
 #else
 		UE_LOG(LogQuestSystemModule, Error, TEXT("QuestSystem: Quest %s (%s) is not the current running quest"),
 			*Quest->Name, *Quest->GetPathName());
@@ -102,10 +103,10 @@ bool UQuestSystem::StopQuest(UObject* SelfObject, UObject* WorldContextObject, c
 	{
 #if WITH_EDITOR
 		FMessageLog("PIE").Error()
-			->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest")))
-			->AddToken(FUObjectToken::Create(Quest))
-			->AddToken(FTextToken::Create(FText::FromString("is not the current running quest ")))
-			->AddToken(FUObjectToken::Create(SelfObject->GetClass()));
+		                  ->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest")))
+		                  ->AddToken(FUObjectToken::Create(Quest))
+		                  ->AddToken(FTextToken::Create(FText::FromString("is not the current running quest ")))
+		                  ->AddToken(FUObjectToken::Create(SelfObject->GetClass()));
 #else
 		UE_LOG(LogQuestSystemModule, Error, TEXT("QuestSystem: Quest %s (%s) is not the current running quest %s (%s)"),
 			*Quest->Name, *Quest->GetPathName(),
@@ -117,16 +118,27 @@ bool UQuestSystem::StopQuest(UObject* SelfObject, UObject* WorldContextObject, c
 
 #if WITH_EDITOR
 	FMessageLog("PIE").Info()
-		->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest Stopped")))
-		->AddToken(FUObjectToken::Create(CurrentQuest->GetClass()))->SetIdentifier(FName("LogQuestSystemModule"));
+	                  ->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest Stopped")))
+	                  ->AddToken(FUObjectToken::Create(Quest));
 #else
 	UE_LOG(LogQuestSystemModule, Log, TEXT("QuestSystem: Quest Stopped %s"), *CurrentQuest->Name);
 #endif
 	
 	if (CurrentQuest->CurrentStep != nullptr)
 	{
+		CurrentQuest->CurrentStep->OnQuestStepCompleted();
 		CurrentQuest->CurrentStep->ConditionalBeginDestroy();
 		CurrentQuest->CurrentStep = nullptr;
+	}
+	else
+	{
+#if WITH_EDITOR
+		FMessageLog("PIE").Error()
+						  ->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest did not have valid current step ")))
+						  ->AddToken(FUObjectToken::Create(Quest));
+#else
+		UE_LOG(LogQuestSystemModule, Log, TEXT("QuestSystem: Quest did not have valid current step %s"), *CurrentQuest->Name);
+#endif
 	}
 
 	CurrentQuest->ConditionalBeginDestroy();
@@ -134,12 +146,14 @@ bool UQuestSystem::StopQuest(UObject* SelfObject, UObject* WorldContextObject, c
 	return true;
 }
 
-bool UQuestSystem::FinishQuest(UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest)
+bool UQuestSystem::StopQuest(UObject* SelfObject, const TSoftObjectPtr<UQuest> InQuest)
 {
-	const UQuest* Quest = GetOrLoad(&InQuest);
-	
-	UE_LOG(LogQuestSystemModule, Log, TEXT("QuestSystem: FINISHED QUEST %s"), *Quest->Name);
-	return true;
+	return FinishQuestInternal(SelfObject, &InQuest, true);
+}
+
+bool UQuestSystem::FinishQuest(UObject* SelfObject, const TSoftObjectPtr<UQuest> InQuest)
+{
+	return FinishQuestInternal(SelfObject, &InQuest, false);
 }
 #pragma endregion
 
@@ -156,18 +170,18 @@ T* UQuestSystem::GetOrLoad(const TSoftObjectPtr<T>* InObject)
 }
 
 template<typename T>
-UClass* UQuestSystem::GetOrLoad(const TSoftClassPtr<T> InClass)
+UClass* UQuestSystem::GetOrLoad(const TSoftClassPtr<T>* InClass)
 {
-	if (InClass.IsValid())
+	if (InClass->IsValid())
 	{
-		return InClass.Get();
+		return InClass->Get();
 	}
 
-	UClass* Class = InClass.LoadSynchronous();
+	UClass* Class = InClass->LoadSynchronous();
 
 	if (Class == nullptr)
 	{
-		UE_LOG(LogQuestSystemModule, Error, TEXT("QuestSystem: Class %s is not valid"), *InClass.ToString());
+		UE_LOG(LogQuestSystemModule, Error, TEXT("QuestSystem: Class %s is not valid"), *InClass->ToString());
 	}
 	
 	return Class;

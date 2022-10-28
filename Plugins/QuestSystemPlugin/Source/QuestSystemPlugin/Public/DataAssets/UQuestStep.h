@@ -9,9 +9,7 @@ class UQuestStep final : public UObject
 {
 	GENERATED_BODY()
 
-public:
-
-	// TODO: Do we need Completed here? maybe for rewards?
+public:		
 	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
 	void OnQuestStepCompleted();
 	

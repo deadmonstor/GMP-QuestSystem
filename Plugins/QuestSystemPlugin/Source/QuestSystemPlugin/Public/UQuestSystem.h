@@ -22,26 +22,27 @@ public:
 		)
 	)
 	static bool StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest);
-	
-	UFUNCTION(BlueprintCallable,
-		Category="QuestSystem",
-		meta =
-		(
-			HidePin = "SelfObject",
-			DefaultToSelf = "SelfObject",
-			WorldContext = "WorldContextObject"
-		)
-	)
-	static bool StopQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest);
+	static bool FinishQuestInternal(const UObject* SelfObject, const TSoftObjectPtr<UQuest>* InQuest, bool bCancelled);
 
 	UFUNCTION(BlueprintCallable,
 		Category="QuestSystem",
 		meta =
 		(
-			WorldContext = "WorldContextObject"
+			HidePin = "SelfObject",
+			DefaultToSelf = "SelfObject"
 		)
 	)
-	static bool FinishQuest(UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest);
+	static bool StopQuest(UObject* SelfObject, const TSoftObjectPtr<UQuest> InQuest);
+
+	UFUNCTION(BlueprintCallable,
+		Category="QuestSystem",
+		meta =
+		(
+			HidePin = "SelfObject",
+			DefaultToSelf = "SelfObject"
+		)
+	)
+	static bool FinishQuest(UObject* SelfObject, const TSoftObjectPtr<UQuest> InQuest);
 	
 private:
 	#pragma region Templated SoftPointer Helpers
@@ -49,6 +50,6 @@ private:
 	static T* GetOrLoad(const TSoftObjectPtr<T>* InObject);
 
 	template<typename T>
-	static UClass* GetOrLoad(const TSoftClassPtr<T> InClass);
+	static UClass* GetOrLoad(const TSoftClassPtr<T>* InClass);
 #pragma endregion
 };
