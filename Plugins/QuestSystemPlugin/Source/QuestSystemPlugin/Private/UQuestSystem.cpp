@@ -8,17 +8,13 @@
 #endif
 
 #pragma region BlueprintFunctions
-
 bool UQuestSystem::StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest)
 {
 	UQuest* Quest = GetOrLoad(&InQuest);
-	UWorld* World = GEngine->GetCurrentPlayWorld();
 	
 	// TODO: Do we actually want to allow this?
-	if (IsValid(CurrentQuest))
+	if (IsValidChecked(CurrentQuest) && CurrentQuest->IsA(UQuest::StaticClass()))
 	{
-		check(CurrentQuest);
-
 #if WITH_EDITOR
 		FMessageLog("PIE").Error()
 			->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest")))
@@ -67,7 +63,7 @@ bool UQuestSystem::StartQuest(UObject* SelfObject, UObject* WorldContextObject, 
 
 	UQuestStep* QuestStepObject = NewObject<UQuestStep>(WorldContextObject, QuestStep);
 	const UQuestSettings* QuestSettingObject = NewObject<UQuestSettings>(WorldContextObject, QuestSetting);
-
+	
 	QuestStepObject->OnQuestStepStart(QuestSettingObject, Quest);
 	CurrentQuest->CurrentStep = QuestStepObject;
 	
@@ -154,6 +150,18 @@ bool UQuestSystem::StopQuest(UObject* SelfObject, const TSoftObjectPtr<UQuest> I
 bool UQuestSystem::FinishQuest(UObject* SelfObject, const TSoftObjectPtr<UQuest> InQuest)
 {
 	return FinishQuestInternal(SelfObject, &InQuest, false);
+}
+
+void UQuestSystem::CallEvent(const FString Name)
+{
+	// TODO: Look if we can make this work in begin play, seems stupid but we probably should be allowed
+	check(CurrentQuest)
+	check(CurrentQuest->CurrentStep)
+	
+	if (CurrentQuest != nullptr && CurrentQuest->CurrentStep != nullptr)
+	{
+		CurrentQuest->CurrentStep->fuckutest.Broadcast(Name);
+	}
 }
 #pragma endregion
 
