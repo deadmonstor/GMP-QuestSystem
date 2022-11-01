@@ -1,7 +1,8 @@
 ﻿#pragma once
+#include "QuestComponent.h"
 #include "UQuestStep.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FFuckYou, FString, Name );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FEventTest, FString, Name );
 
 class UQuestSettings;
 class UQuest;
@@ -10,20 +11,37 @@ class UQuestStep final : public UObject
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	bool IsReady = false;
+	
+	UPROPERTY(BlueprintReadOnly)
+	UQuestComponent* OwnerQuestComponent;
+
+	UPROPERTY()
+	UQuest* OwnerQuest;
+	
 public:		
-	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
+	UFUNCTION(BlueprintImplementableEvent,
+		Category = "QuestStep"
+	)
 	void OnQuestStepCompleted();
 	
-	UFUNCTION(BlueprintImplementableEvent, Category = "Quest")
+	UFUNCTION(BlueprintImplementableEvent,
+		Category = "QuestStep"
+	)
 	void OnQuestStepStart(const UQuestSettings* QuestStepData, const UQuest* Quest);
+	
+	UFUNCTION(BlueprintCallable,
+		Category="QuestStep"
+	)
+	void CallEvent(FString Name);
 
-	// TODO: Make sure this is actually the best way of doing it
-	virtual UWorld* GetWorld() const override
-	{
-		return GEngine->GetCurrentPlayWorld();
-	}
+	UPROPERTY(BlueprintAssignable,
+		Category="QuestStep"
+	)
+	FEventTest EventTest;
 
-	// BUG: TODO: FUCKU: REMIND NATHAN TO MATCAP 
-	UPROPERTY(BlueprintAssignable, Category="Quest");
-	FFuckYou fuckutest;
+	virtual UWorld* GetWorld() const override;
+	void Init(UQuestComponent* QuestComponent, UQuest* Quest);
 };

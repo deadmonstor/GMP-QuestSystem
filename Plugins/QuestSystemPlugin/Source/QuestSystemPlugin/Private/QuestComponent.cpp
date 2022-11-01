@@ -1,5 +1,8 @@
-﻿#include "UQuestSystem.h"
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "QuestComponent.h"
 #include "QuestSystemPlugin.h"
+#include "DataAssets/Quest.h"
 #include "DataAssets/UQuestSettings.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -7,13 +10,23 @@
 	#include "Misc/UObjectToken.h"
 #endif
 
+UQuestComponent::UQuestComponent()
+{
+	PrimaryComponentTick.bCanEverTick = false;
+}
+
+void UQuestComponent::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 #pragma region BlueprintFunctions
-bool UQuestSystem::StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest)
+bool UQuestComponent::StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest)
 {
 	UQuest* Quest = GetOrLoad(&InQuest);
 	
 	// TODO: Do we actually want to allow this?
-	if (IsValidChecked(CurrentQuest) && CurrentQuest->IsA(UQuest::StaticClass()))
+	if (CurrentQuest != nullptr && IsValidChecked(CurrentQuest) && CurrentQuest->IsA(UQuest::StaticClass()))
 	{
 #if WITH_EDITOR
 		FMessageLog("PIE").Error()
@@ -64,20 +77,21 @@ bool UQuestSystem::StartQuest(UObject* SelfObject, UObject* WorldContextObject, 
 	UQuestStep* QuestStepObject = NewObject<UQuestStep>(WorldContextObject, QuestStep);
 	const UQuestSettings* QuestSettingObject = NewObject<UQuestSettings>(WorldContextObject, QuestSetting);
 	
-	QuestStepObject->OnQuestStepStart(QuestSettingObject, Quest);
 	CurrentQuest->CurrentStep = QuestStepObject;
+	QuestStepObject->Init(this, CurrentQuest);
+	QuestStepObject->OnQuestStepStart(QuestSettingObject, Quest);
 	
 	return true;
 }
 
-bool UQuestSystem::FinishQuestInternal(const UObject* SelfObject, const TSoftObjectPtr<UQuest>* InQuest, bool bCancelled)
+bool UQuestComponent::FinishQuestInternal(const UObject* SelfObject, bool bCancelled)
 {
-	const UQuest* Quest = GetOrLoad(InQuest);
+	//const UQuest* Quest = GetOrLoad(InQuest);
 	
 	// TODO: Do we actually want to allow this?
-	if (!IsValid(CurrentQuest))
+	if (CurrentQuest == NULL || !IsValidChecked(CurrentQuest))
 	{
-		UE_LOG(LogQuestSystemModule, Error, TEXT("QuestSystem: Quest %s (%s) is not the current running quest"),
+		/*UE_LOG(LogQuestSystemModule, Error, TEXT("QuestSystem: Quest %s (%s) is not the current running quest"),
 		       *Quest->Name, *Quest->GetPathName());
 
 #if WITH_EDITOR
@@ -89,13 +103,13 @@ bool UQuestSystem::FinishQuestInternal(const UObject* SelfObject, const TSoftObj
 #else
 		UE_LOG(LogQuestSystemModule, Error, TEXT("QuestSystem: Quest %s (%s) is not the current running quest"),
 			*Quest->Name, *Quest->GetPathName());
-#endif
+#endif*/
 		
 		return false;
 	}
 
 	// TODO: We need a better way of identifying this as it can be broken
-	if (CurrentQuest->Name != Quest->Name)
+	/*if (CurrentQuest->Name != Quest->Name)
 	{
 #if WITH_EDITOR
 		FMessageLog("PIE").Error()
@@ -110,12 +124,12 @@ bool UQuestSystem::FinishQuestInternal(const UObject* SelfObject, const TSoftObj
 #endif
 		
 		return false;
-	}
+	}*/
 
 #if WITH_EDITOR
 	FMessageLog("PIE").Info()
-	                  ->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest Stopped")))
-	                  ->AddToken(FUObjectToken::Create(Quest));
+	                  ->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest Stopped ")))
+	                  ->AddToken(FTextToken::Create(FText::FromString(CurrentQuest->Name)));
 #else
 	UE_LOG(LogQuestSystemModule, Log, TEXT("QuestSystem: Quest Stopped %s"), *CurrentQuest->Name);
 #endif
@@ -131,7 +145,7 @@ bool UQuestSystem::FinishQuestInternal(const UObject* SelfObject, const TSoftObj
 #if WITH_EDITOR
 		FMessageLog("PIE").Error()
 						  ->AddToken(FTextToken::Create(FText::FromString("QuestSystem: Quest did not have valid current step ")))
-						  ->AddToken(FUObjectToken::Create(Quest));
+		                  ->AddToken(FTextToken::Create(FText::FromString(CurrentQuest->Name)));
 #else
 		UE_LOG(LogQuestSystemModule, Log, TEXT("QuestSystem: Quest did not have valid current step %s"), *CurrentQuest->Name);
 #endif
@@ -142,32 +156,20 @@ bool UQuestSystem::FinishQuestInternal(const UObject* SelfObject, const TSoftObj
 	return true;
 }
 
-bool UQuestSystem::StopQuest(UObject* SelfObject, const TSoftObjectPtr<UQuest> InQuest)
+bool UQuestComponent::CancelQuest(UObject* SelfObject)
 {
-	return FinishQuestInternal(SelfObject, &InQuest, true);
+	return FinishQuestInternal(SelfObject, true);
 }
 
-bool UQuestSystem::FinishQuest(UObject* SelfObject, const TSoftObjectPtr<UQuest> InQuest)
+bool UQuestComponent::FinishQuest(UObject* SelfObject)
 {
-	return FinishQuestInternal(SelfObject, &InQuest, false);
-}
-
-void UQuestSystem::CallEvent(const FString Name)
-{
-	// TODO: Look if we can make this work in begin play, seems stupid but we probably should be allowed
-	check(CurrentQuest)
-	check(CurrentQuest->CurrentStep)
-	
-	if (CurrentQuest != nullptr && CurrentQuest->CurrentStep != nullptr)
-	{
-		CurrentQuest->CurrentStep->fuckutest.Broadcast(Name);
-	}
+	return FinishQuestInternal(SelfObject, false);
 }
 #pragma endregion
 
 #pragma region Templated SoftPointer Helpers
 template<typename T>
-T* UQuestSystem::GetOrLoad(const TSoftObjectPtr<T>* InObject)
+T* UQuestComponent::GetOrLoad(const TSoftObjectPtr<T>* InObject)
 {
 	if (InObject->IsValid())
 	{
@@ -178,7 +180,7 @@ T* UQuestSystem::GetOrLoad(const TSoftObjectPtr<T>* InObject)
 }
 
 template<typename T>
-UClass* UQuestSystem::GetOrLoad(const TSoftClassPtr<T>* InClass)
+UClass* UQuestComponent::GetOrLoad(const TSoftClassPtr<T>* InClass)
 {
 	if (InClass->IsValid())
 	{
