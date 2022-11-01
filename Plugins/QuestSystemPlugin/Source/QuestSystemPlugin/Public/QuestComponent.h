@@ -21,6 +21,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	void CreateStepObject(UObject* WorldContextObject, const UQuest* Quest, const int ID);
 
 public:
 	UFUNCTION(BlueprintCallable,
@@ -33,6 +34,7 @@ public:
 		)
 	)
 	bool StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest);
+	void QuestStepCompletedExec(bool bCancelled);
 	bool FinishQuestInternal(const UObject* SelfObject, bool bCancelled);
 
 	UFUNCTION(BlueprintCallable,
@@ -60,10 +62,11 @@ public:
 		meta =
 		(
 			HidePin = "SelfObject",
-			DefaultToSelf = "SelfObject"
+			DefaultToSelf = "SelfObject",
+			WorldContext = "WorldContextObject"
 		)
 	)
-	bool FinishStep(UObject* SelfObject, UQuestStep* Step);
+	bool FinishStep(UObject* SelfObject, UObject* WorldContextObject);
 	
 private:
 #pragma region Templated SoftPointer Helpers

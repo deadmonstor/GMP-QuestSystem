@@ -19,4 +19,7 @@ public:
 
 	UPROPERTY()
 	UQuestStep* CurrentStep;
+
+	UPROPERTY()
+	int CurrentStepID;
 };

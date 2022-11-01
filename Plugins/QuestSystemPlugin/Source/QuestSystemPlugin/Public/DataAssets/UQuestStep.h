@@ -26,7 +26,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent,
 		Category = "QuestStep"
 	)
-	void OnQuestStepCompleted();
+	void OnQuestStepCompleted(bool bCancelled);
 	
 	UFUNCTION(BlueprintImplementableEvent,
 		Category = "QuestStep"
