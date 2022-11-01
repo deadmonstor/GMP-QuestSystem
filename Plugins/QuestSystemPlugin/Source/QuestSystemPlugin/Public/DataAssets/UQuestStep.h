@@ -1,11 +1,12 @@
 ﻿#pragma once
-#include "QuestComponent.h"
 #include "UQuestStep.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FEventTest, FString, Name );
 
 class UQuestSettings;
 class UQuest;
+class UQuestComponent;
+
 UCLASS(Blueprintable, BlueprintType)
 class UQuestStep final : public UObject
 {
