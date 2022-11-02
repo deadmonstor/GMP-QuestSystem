@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "DataAssets/UQuestStep.h"
+#include "DataAssets/QuestStep.h"
 
-#include "FQuestStruct.generated.h"
+#include "QuestStruct.generated.h"
 
 class UQuestSettings;
 USTRUCT(BlueprintType)
@@ -16,4 +16,3 @@ struct FQuestStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftClassPtr<UQuestSettings> QuestSettings;
 };
-

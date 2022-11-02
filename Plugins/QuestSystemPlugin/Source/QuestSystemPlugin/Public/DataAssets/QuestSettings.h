@@ -4,11 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
-#include "UQuestSettings.generated.h"
+#include "QuestSettings.generated.h"
 
-/**
- * 
- */
 UCLASS(Blueprintable, BlueprintType)
 class QUESTSYSTEMPLUGIN_API UQuestSettings final : public UObject
 {

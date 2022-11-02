@@ -7,49 +7,46 @@ public class QuestSystemPlugin : ModuleRules
 	public QuestSystemPlugin(ReadOnlyTargetRules Target) : base(Target)
 	{
 		bEnforceIWYU = true;
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
 		PublicIncludePaths.AddRange(
-			new string[] {
-				// ... add public include paths required here ...
-			}
-			);
-				
-		
-		PrivateIncludePaths.AddRange(
-			new string[] {
-				// ... add other private include paths required here ...
-			}
-			);
-			
-		
-		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core", 
-				"Engine",
-				// ... add other public dependencies that you statically link with here ...
 			}
-			);
-			
-		
-		PrivateDependencyModuleNames.AddRange(
+		);
+
+
+		PrivateIncludePaths.AddRange(
 			new string[]
+			{
+			}
+		);
+
+
+		PublicDependencyModuleNames.AddRange(
+			new[]
+			{
+				"Core",
+				"Engine"
+			}
+		);
+
+
+		PrivateDependencyModuleNames.AddRange(
+			new[]
 			{
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore",
-				// ... add private dependencies that you statically link with here ...	
+				"SlateCore"
 			}
-			);
-		
-		
+		);
+
+
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{
-				// ... add any modules that your module loads dynamically here ...
 			}
-			);
+		);
 	}
 }

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "DataAssets/UQuestStep.h"
+#include "DataAssets/QuestStep.h"
 #include "QuestComponent.generated.h"
 
 class UQuest;
@@ -16,64 +16,37 @@ class QUESTSYSTEMPLUGIN_API UQuestComponent final : public UActorComponent
 	UPROPERTY()
 	UQuest* CurrentQuest;
 
-public:
-	UQuestComponent();
+#pragma region Templated SoftPointer Helpers
+	template <typename T>
+	static T* GetOrLoad(const TSoftObjectPtr<T>* InObject);
+
+	template <typename T>
+	static UClass* GetOrLoad(const TSoftClassPtr<T>* InClass);
+#pragma endregion
 
 protected:
-	virtual void BeginPlay() override;
-	void CreateStepObject(UObject* WorldContextObject, const UQuest* Quest, const int ID);
-
-public:
-	UFUNCTION(BlueprintCallable,
-		Category="QuestSystem",
-		meta =
-		(
-			HidePin = "SelfObject",
-			DefaultToSelf = "SelfObject",
-			WorldContext = "WorldContextObject"
-		)
-	)
-	bool StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest);
+	void CreateStepObject(UObject* WorldContextObject, const int ID);
 	void QuestStepCompletedExec(bool bCancelled);
 	bool FinishQuestInternal(const UObject* SelfObject, bool bCancelled);
 
-	UFUNCTION(BlueprintCallable,
-		Category="QuestSystem",
-		meta =
-		(
-			HidePin = "SelfObject",
-			DefaultToSelf = "SelfObject"
-		)
-	)
+public:
+	UQuestComponent();
+
+	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = (HidePin = "SelfObject", DefaultToSelf = "SelfObject", WorldContext = "WorldContextObject"))
+	bool StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest);
+
+	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = (HidePin = "SelfObject", DefaultToSelf = "SelfObject"))
 	bool CancelQuest(UObject* SelfObject);
 
-	UFUNCTION(BlueprintCallable,
-		Category="QuestSystem",
-		meta =
-		(
-			HidePin = "SelfObject",
-			DefaultToSelf = "SelfObject"
-		)
-	)
+	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = (HidePin = "SelfObject", DefaultToSelf = "SelfObject"))
 	bool FinishQuest(UObject* SelfObject);
 
-	UFUNCTION(BlueprintCallable,
-		Category="QuestSystem",
-		meta =
-		(
-			HidePin = "SelfObject",
-			DefaultToSelf = "SelfObject",
-			WorldContext = "WorldContextObject"
-		)
-	)
+	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = ( HidePin = "SelfObject", DefaultToSelf = "SelfObject", WorldContext = "WorldContextObject"))
 	bool FinishStep(UObject* SelfObject, UObject* WorldContextObject);
 	
-private:
-#pragma region Templated SoftPointer Helpers
-	template<typename T>
-	T* GetOrLoad(const TSoftObjectPtr<T>* InObject);
-
-	template<typename T>
-	UClass* GetOrLoad(const TSoftClassPtr<T>* InClass);
-#pragma endregion
+	UFUNCTION(BlueprintCallable)
+	FString GetName() const;
+	
+	UFUNCTION(BlueprintCallable)
+	FString GetDescription() const;
 };

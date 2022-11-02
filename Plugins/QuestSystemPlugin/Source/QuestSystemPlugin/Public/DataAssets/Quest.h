@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "FQuestStruct.h"
-#include "UQuestStep.h"
+#include "QuestStep.h"
+#include "QuestStruct.h"
 #include "Quest.generated.h"
 
 UCLASS(BlueprintType)
@@ -17,9 +17,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TArray<FQuestStruct> Steps;
 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	UQuestStep* CurrentStep;
 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	int CurrentStepID;
 };
