@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -16,24 +14,23 @@ class QUESTSYSTEMPLUGIN_API UQuestComponent final : public UActorComponent
 	UPROPERTY()
 	UQuest* CurrentQuest;
 
-#pragma region Templated SoftPointer Helpers
-	template <typename T>
-	static T* GetOrLoad(const TSoftObjectPtr<T>* InObject);
+	#pragma region Templated SoftPointer Helpers
+		template <typename T>
+		static T* GetOrLoad(const TSoftObjectPtr<T>* InObject);
 
-	template <typename T>
-	static UClass* GetOrLoad(const TSoftClassPtr<T>* InClass);
-#pragma endregion
-
-protected:
-	void CreateStepObject(UObject* WorldContextObject, const int ID);
+		template <typename T>
+		static UClass* GetOrLoad(const TSoftClassPtr<T>* InClass);
+	#pragma endregion
+	
+	void CreateStepObject(const int ID);
 	void QuestStepCompletedExec(bool bCancelled);
 	bool FinishQuestInternal(const UObject* SelfObject, bool bCancelled);
 
 public:
 	UQuestComponent();
-
-	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = (HidePin = "SelfObject", DefaultToSelf = "SelfObject", WorldContext = "WorldContextObject"))
-	bool StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest);
+	
+	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = (HidePin = "SelfObject", DefaultToSelf = "SelfObject"))
+	bool StartQuest(UObject* SelfObject, const TSoftObjectPtr<UQuest> InQuest);
 
 	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = (HidePin = "SelfObject", DefaultToSelf = "SelfObject"))
 	bool CancelQuest(UObject* SelfObject);
@@ -41,12 +38,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = (HidePin = "SelfObject", DefaultToSelf = "SelfObject"))
 	bool FinishQuest(UObject* SelfObject);
 
-	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = ( HidePin = "SelfObject", DefaultToSelf = "SelfObject", WorldContext = "WorldContextObject"))
-	bool FinishStep(UObject* SelfObject, UObject* WorldContextObject);
+	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = ( HidePin = "SelfObject", DefaultToSelf = "SelfObject"))
+	bool FinishStep(UObject* SelfObject);
 	
 	UFUNCTION(BlueprintCallable)
-	FString GetName() const;
-	
+	FString GetCurrentQuestName() const;
+
 	UFUNCTION(BlueprintCallable)
-	FString GetDescription() const;
+	FString GetCurrentQuestDescription() const;
+
+	UFUNCTION(BlueprintCallable)
+	UQuest* GetCurrentQuest() const { return CurrentQuest; }
 };

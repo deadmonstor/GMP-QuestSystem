@@ -1,6 +1,4 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
-
-#include "QuestSystemPlugin.h"
+﻿#include "QuestSystemPlugin.h"
 
 #define LOCTEXT_NAMESPACE "FQuestSystemModule"
 	DEFINE_LOG_CATEGORY(LogQuestSystemModule)

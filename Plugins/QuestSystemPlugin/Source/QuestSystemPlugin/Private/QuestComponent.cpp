@@ -1,6 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#include "QuestComponent.h"
+﻿#include "QuestComponent.h"
 #include "QuestSystemPlugin.h"
 #include "DataAssets/Quest.h"
 #include "DataAssets/QuestSettings.h"
@@ -17,23 +15,23 @@ UQuestComponent::UQuestComponent()
 
 #pragma region BlueprintFunctions
 
-void UQuestComponent::CreateStepObject(UObject* WorldContextObject, const int ID)
+void UQuestComponent::CreateStepObject(const int ID)
 {
 	const auto [QuestStepClass, QuestSettingClass] = CurrentQuest->Steps[ID];
 
 	const UClass* QuestStep = GetOrLoad(&QuestStepClass);
 	const UClass* QuestSetting = GetOrLoad(&QuestSettingClass);
 
-	UQuestStep* QuestStepObject = NewObject<UQuestStep>(WorldContextObject, QuestStep);
-	const UQuestSettings* QuestSettingObject = NewObject<UQuestSettings>(WorldContextObject, QuestSetting);
+	UQuestStep* QuestStepObject = NewObject<UQuestStep>(GetWorld(), QuestStep);
+	const UQuestSettings* QuestSettingObject = NewObject<UQuestSettings>(GetWorld(), QuestSetting);
 
 	CurrentQuest->CurrentStep = QuestStepObject;
 	CurrentQuest->CurrentStepID = ID;
-	QuestStepObject->Init(this, CurrentQuest);
+	QuestStepObject->Init(this);
 	QuestStepObject->OnQuestStepStart(QuestSettingObject, CurrentQuest, this);
 }
 
-bool UQuestComponent::StartQuest(UObject* SelfObject, UObject* WorldContextObject, const TSoftObjectPtr<UQuest> InQuest)
+bool UQuestComponent::StartQuest(UObject* SelfObject, const TSoftObjectPtr<UQuest> InQuest)
 {
 	UQuest* Quest = GetOrLoad(&InQuest);
 
@@ -53,7 +51,7 @@ bool UQuestComponent::StartQuest(UObject* SelfObject, UObject* WorldContextObjec
 		return false;
 	}
 
-	CurrentQuest = DuplicateObject(Quest, WorldContextObject);
+	CurrentQuest = DuplicateObject(Quest, GetWorld());
 
 	if (CurrentQuest->Steps.Max() == 0)
 	{
@@ -79,7 +77,7 @@ bool UQuestComponent::StartQuest(UObject* SelfObject, UObject* WorldContextObjec
 	UE_LOG(LogQuestSystemModule, Log, TEXT("QuestSystem: Starting Quest %s (%s)"), *CurrentQuest->Name, *CurrentQuest->GetPathName());
 #endif
 
-	CreateStepObject(WorldContextObject, 0);
+	CreateStepObject(0);
 
 	return true;
 }
@@ -150,7 +148,7 @@ bool UQuestComponent::FinishQuest(UObject* SelfObject)
 	return FinishQuestInternal(SelfObject, false);
 }
 
-bool UQuestComponent::FinishStep(UObject* SelfObject, UObject* WorldContextObject)
+bool UQuestComponent::FinishStep(UObject* SelfObject)
 {
 	if (CurrentQuest != nullptr && CurrentQuest->CurrentStep != nullptr)
 	{
@@ -171,13 +169,13 @@ bool UQuestComponent::FinishStep(UObject* SelfObject, UObject* WorldContextObjec
 #endif
 
 		QuestStepCompletedExec(false);
-		CreateStepObject(WorldContextObject, NextID);
+		CreateStepObject(NextID);
 	}
 
 	return false;
 }
 
-FString UQuestComponent::GetName() const
+FString UQuestComponent::GetCurrentQuestName() const
 {
 	if (CurrentQuest != nullptr)
 	{
@@ -187,7 +185,7 @@ FString UQuestComponent::GetName() const
 	return FString();
 }
 
-FString UQuestComponent::GetDescription() const
+FString UQuestComponent::GetCurrentQuestDescription() const
 {
 	if (CurrentQuest != nullptr && CurrentQuest->CurrentStep != nullptr)
 	{
@@ -223,6 +221,7 @@ UClass* UQuestComponent::GetOrLoad(const TSoftClassPtr<T>* InClass)
 	if (Class == nullptr)
 	{
 		UE_LOG(LogQuestSystemModule, Error, TEXT("QuestSystem: Class %s is not valid"), *InClass->ToString());
+		return nullptr;
 	}
 
 	return Class;

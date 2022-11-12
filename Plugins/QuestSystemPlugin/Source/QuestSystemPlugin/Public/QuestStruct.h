@@ -1,9 +1,8 @@
 ﻿#pragma once
-#include "DataAssets/QuestStep.h"
-
 #include "QuestStruct.generated.h"
 
 class UQuestSettings;
+class UQuestStep;
 USTRUCT(BlueprintType)
 
 struct FQuestStruct
