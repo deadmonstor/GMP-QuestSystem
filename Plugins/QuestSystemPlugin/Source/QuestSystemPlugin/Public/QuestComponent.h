@@ -23,7 +23,7 @@ class QUESTSYSTEMPLUGIN_API UQuestComponent final : public UActorComponent
 	#pragma endregion
 	
 	void CreateStepObject(const int ID);
-	void QuestStepCompletedExec(bool bCancelled);
+	void QuestStepCompletedExec(bool bCancelled) const;
 	bool FinishQuestInternal(const UObject* SelfObject, bool bCancelled);
 
 public:

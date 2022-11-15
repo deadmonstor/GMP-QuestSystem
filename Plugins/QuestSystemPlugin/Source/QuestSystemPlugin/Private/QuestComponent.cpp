@@ -82,7 +82,7 @@ bool UQuestComponent::StartQuest(UObject* SelfObject, const TSoftObjectPtr<UQues
 	return true;
 }
 
-void UQuestComponent::QuestStepCompletedExec(const bool bCancelled)
+void UQuestComponent::QuestStepCompletedExec(const bool bCancelled) const
 {
 	CurrentQuest->CurrentStep->OnQuestStepCompleted(bCancelled);
 	CurrentQuest->CurrentStep->ConditionalBeginDestroy();
