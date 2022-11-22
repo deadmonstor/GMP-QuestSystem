@@ -15,7 +15,6 @@ void UQuestStep::Init(UQuestComponent* QuestComponent)
 
 void UQuestStep::CallEvent(const FString Name) const
 {
-	// TODO: Should we just be halting here or should we try and be nice and error
 	if (!IsReady)
 	{
 		return;
