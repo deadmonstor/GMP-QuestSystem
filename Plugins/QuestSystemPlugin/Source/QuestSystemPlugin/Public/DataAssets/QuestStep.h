@@ -1,11 +1,19 @@
 ﻿#pragma once
 #include "QuestStep.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEventTest, FString, Name);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FQuestEvent, FString, Name);
 
 class UQuestSettings;
 class UQuest;
 class UQuestComponent;
+
+USTRUCT()
+struct FTestasdasdasda
+{
+	GENERATED_BODY();
+	
+	TArray<FQuestEvent> test;
+};
 
 UCLASS(Blueprintable, BlueprintType)
 class UQuestStep final : public UObject
@@ -22,6 +30,9 @@ protected:
 	UPROPERTY()
 	UQuest* OwnerQuest;
 
+	UPROPERTY()
+	TMap<FString, FTestasdasdasda> EventQuest;
+
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "QuestStep")
 	void OnQuestStepCompleted(bool bCancelled);
@@ -34,8 +45,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="QuestStep")
 	void CallEvent(FString Name) const;
 
-	UPROPERTY(BlueprintAssignable, Category="QuestStep")
-	FEventTest EventTest;
+	UFUNCTION(BlueprintCallable, Category="QuestStep")
+	void BindEventToName(const FString Name, FQuestEvent EventRef);
 
 	UFUNCTION(BlueprintImplementableEvent, Category="QuestStep")
 	FString GetDescription();
