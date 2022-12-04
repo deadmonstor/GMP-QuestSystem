@@ -8,11 +8,11 @@ class UQuest;
 class UQuestComponent;
 
 USTRUCT()
-struct FTestasdasdasda
+struct FEventHolder
 {
 	GENERATED_BODY();
 	
-	TArray<FQuestEvent> test;
+	TArray<FQuestEvent> Events;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -31,7 +31,7 @@ protected:
 	UQuest* OwnerQuest;
 
 	UPROPERTY()
-	TMap<FString, FTestasdasdasda> EventQuest;
+	TMap<FString, FEventHolder> EventQuest;
 
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "QuestStep")

@@ -25,25 +25,25 @@ void UQuestStep::CallEvent(const FString Name) const
 		return;
 	}
 
-	for (int i = 0; i < EventQuest[Name].test.Num(); i++)
+	for (int i = 0; i < EventQuest[Name].Events.Num(); i++)
 	{
-		// TODO: If this works remove the name here, unless they bind it to two? might be needed idk
-
-		if (!EventQuest[Name].test[i].ExecuteIfBound(Name))
+		if (!EventQuest[Name].Events[i].ExecuteIfBound(Name))
 		{
-			//EventQuest[Name].test.Remove(EventQuest[Name].test[i]);
+			auto Events = EventQuest[Name].Events;
+			Events.Remove(Events[i]);
+
+			// TODO: Look into this
+			//EventQuest[Name].Events.RemoveAt(i);
 		}
 	}
 }
 
 void UQuestStep::BindEventToName(const FString Name, const FQuestEvent EventRef)
 {
-	// TODO: Check if this is a mem leak lol
-
 	if (!EventQuest.Contains(Name))
 	{
-		EventQuest.Add(Name, FTestasdasdasda());
+		EventQuest.Add(Name, FEventHolder());
 	}
 	
-	EventQuest[Name].test.Add(EventRef);
+	EventQuest[Name].Events.Add(EventRef);
 }
