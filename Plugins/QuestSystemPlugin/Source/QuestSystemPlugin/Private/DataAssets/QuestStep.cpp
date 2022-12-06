@@ -30,10 +30,7 @@ void UQuestStep::CallEvent(const FString Name) const
 		if (!EventQuest[Name].Events[i].ExecuteIfBound(Name))
 		{
 			auto Events = EventQuest[Name].Events;
-			Events.Remove(Events[i]);
-
-			// TODO: Look into this
-			//EventQuest[Name].Events.RemoveAt(i);
+			Events.RemoveAt(i);
 		}
 	}
 }
@@ -46,4 +43,19 @@ void UQuestStep::BindEventToName(const FString Name, const FQuestEvent EventRef)
 	}
 	
 	EventQuest[Name].Events.Add(EventRef);
+}
+
+void UQuestStep::RemoveEventFromName(const FString Name, const FQuestEvent EventRef)
+{
+	if (!EventQuest.Contains(Name))
+	{
+		return;
+	}
+
+	if (!EventQuest[Name].Events.Contains(EventRef))
+	{
+		return;
+	}
+	
+	EventQuest[Name].Events.Remove(EventRef);
 }

@@ -21,9 +21,6 @@ class UQuestStep final : public UObject
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(BlueprintReadOnly)
-	bool IsReady = false;
-
 	UPROPERTY()
 	UQuestComponent* OwnerQuestComponent;
 
@@ -33,6 +30,8 @@ protected:
 	UPROPERTY()
 	TMap<FString, FEventHolder> EventQuest;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool IsReady = false;
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "QuestStep")
 	void OnQuestStepCompleted(bool bCancelled);
@@ -47,7 +46,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="QuestStep")
 	void BindEventToName(const FString Name, FQuestEvent EventRef);
-
+	
+	UFUNCTION(BlueprintCallable, Category="QuestStep")
+	void RemoveEventFromName(const FString Name, FQuestEvent EventRef);
+	
 	UFUNCTION(BlueprintImplementableEvent, Category="QuestStep")
 	FString GetDescription();
 
