@@ -1,11 +1,6 @@
 ﻿#include "DataAssets/QuestStep.h"
 #include "QuestComponent.h"
 
-UWorld* UQuestStep::GetWorld() const
-{
-	return GEngine->GetCurrentPlayWorld();
-}
-
 void UQuestStep::Init(UQuestComponent* QuestComponent)
 {
 	OwnerQuestComponent = QuestComponent;

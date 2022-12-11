@@ -9,9 +9,9 @@ struct FQuestStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BlueprintBaseOnly=true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="QuestStruct", meta=(BlueprintBaseOnly=true))
 	TSoftClassPtr<UQuestStep> QuestComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="QuestStruct")
 	TSoftClassPtr<UQuestSettings> QuestSettings;
 };

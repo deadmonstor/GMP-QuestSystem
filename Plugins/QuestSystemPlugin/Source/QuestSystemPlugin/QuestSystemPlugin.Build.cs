@@ -6,7 +6,6 @@ public class QuestSystemPlugin : ModuleRules
 {
 	public QuestSystemPlugin(ReadOnlyTargetRules Target) : base(Target)
 	{
-		bEnforceIWYU = true;
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicIncludePaths.AddRange(

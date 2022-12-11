@@ -21,16 +21,16 @@ class UQuestStep final : public UObject
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category="QuestStep")
 	UQuestComponent* OwnerQuestComponent;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category="QuestStep")
 	UQuest* OwnerQuest;
 
 	UPROPERTY()
 	TMap<FString, FEventHolder> EventQuest;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category="QuestStep")
 	bool IsReady = false;
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "QuestStep")
@@ -54,7 +54,7 @@ public:
 	FString GetDescription();
 
 #if WITH_ENGINE
-	virtual UWorld* GetWorld() const override;
+	virtual UWorld* GetWorld() const override { return GEngine->GetCurrentPlayWorld(); };
 #endif
 	
 	void Init(UQuestComponent* QuestComponent);

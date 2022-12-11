@@ -41,15 +41,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category="QuestSystem", meta = ( HidePin = "SelfObject", DefaultToSelf = "SelfObject"))
 	bool FinishStep(UObject* SelfObject);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="QuestSystem")
 	bool IsInCurrentQuest() const;
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="QuestSystem")
 	FString GetCurrentQuestName() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="QuestSystem")
 	FString GetCurrentQuestDescription() const;
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="QuestSystem")
 	UQuest* GetCurrentQuest() const { return CurrentQuest; }
 };

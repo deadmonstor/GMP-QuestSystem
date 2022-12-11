@@ -11,10 +11,10 @@ class UQuest final : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="QuestSystem")
 	FString Name;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="QuestSystem")
 	TArray<FQuestStruct> Steps;
 
 	UPROPERTY(Transient)
