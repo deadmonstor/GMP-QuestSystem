@@ -21,10 +21,10 @@ class UQuestStep final : public UObject
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UQuestComponent* OwnerQuestComponent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	UQuest* OwnerQuest;
 
 	UPROPERTY()

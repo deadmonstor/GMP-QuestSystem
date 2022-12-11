@@ -175,6 +175,11 @@ bool UQuestComponent::FinishStep(UObject* SelfObject)
 	return false;
 }
 
+bool UQuestComponent::IsInCurrentQuest() const
+{
+	return CurrentQuest != nullptr && CurrentQuest->CurrentStep != nullptr;
+}
+
 FString UQuestComponent::GetCurrentQuestName() const
 {
 	if (CurrentQuest != nullptr)
